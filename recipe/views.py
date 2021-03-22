@@ -17,7 +17,7 @@ class BaseRecipeAttrsViewSet(viewsets.GenericViewSet,
         return self.queryset.filter(user=self.request.user).order_by('-name')
 
     def perform_create(self, serializer):
-        serializer.save(user=self.actionrequest.user)
+        serializer.save(user=self.request.user)
 
 
 class TagViewSet(BaseRecipeAttrsViewSet):
@@ -42,3 +42,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        """Return appropirate serialzier class"""
+        if self.action == 'retrieve':
+            return serializers.RecipeDetailSerializer
+
+        return self.serializer_class
+
+    def perform_create(self, serializer):
+        """Create a new recipe"""
+        serializer.save(user=self.request.user)
